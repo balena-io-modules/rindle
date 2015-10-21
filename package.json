@@ -1,0 +1,41 @@
+{
+  "name": "rindle",
+  "version": "1.0.0",
+  "description": "Collection of utilities for working with Streams",
+  "main": "lib/rindle.js",
+  "homepage": "https://github.com/jviotti/rindle",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jviotti/rindle.git"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "gulp test",
+    "prepublish": "gulp test",
+    "readme": "jsdoc2md --template doc/README.hbs lib/{,**/}*.js > README.md"
+  },
+  "keywords": [
+    "rindle",
+    "stream",
+    "utils",
+    "toolbelt",
+    "util"
+  ],
+  "author": "Juan Cruz Viotti <jviottidc@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.1.3",
+    "jsdoc-to-markdown": "^1.1.1",
+    "jshint-stylish": "^2.0.1",
+    "mochainon": "^1.0.0",
+    "tmp": "0.0.28"
+  },
+  "dependencies": {
+    "bluebird": "^2.10.2",
+    "lodash": "^3.10.1"
+  }
+}
