@@ -284,4 +284,148 @@ describe('Rindle:', function() {
 
   });
 
+  describe('.pipeWithEvents()', function() {
+
+    describe('given a stream which emits various events', function() {
+
+      beforeEach(function() {
+        this.stream = new StreamReadable({
+          encoding: 'utf8'
+        });
+
+        this.stream._read = function() {
+          this.push('Hello');
+          this.push(' ');
+          this.push('World');
+          this.push(null);
+        };
+
+        _.defer(_.bind(function() {
+          this.stream.emit('foo');
+          this.stream.emit('bar');
+          this.stream.emit('baz');
+        }, this));
+      });
+
+      it('should be able to pipe all events', function(done) {
+        var output = new StreamPassThrough();
+
+        var fooSpy = m.sinon.spy();
+        var barSpy = m.sinon.spy();
+        var bazSpy = m.sinon.spy();
+
+        output.on('foo', fooSpy);
+        output.on('bar', barSpy);
+        output.on('baz', bazSpy);
+
+        var pipe = rindle.pipeWithEvents(this.stream, output, [ 'foo', 'bar', 'baz' ]);
+        rindle.extract(pipe).delay(100).then(function(data) {
+          m.chai.expect(data).to.equal('Hello World');
+          m.chai.expect(fooSpy).to.have.been.calledOnce;
+          m.chai.expect(barSpy).to.have.been.calledOnce;
+          m.chai.expect(bazSpy).to.have.been.calledOnce;
+        }).nodeify(done);
+      });
+
+      it('should be able to pipe some events', function(done) {
+        var output = new StreamPassThrough();
+
+        var fooSpy = m.sinon.spy();
+        var barSpy = m.sinon.spy();
+        var bazSpy = m.sinon.spy();
+
+        output.on('foo', fooSpy);
+        output.on('bar', barSpy);
+        output.on('baz', bazSpy);
+
+        var pipe = rindle.pipeWithEvents(this.stream, output, [ 'bar' ]);
+        rindle.extract(pipe).delay(100).then(function(data) {
+          m.chai.expect(data).to.equal('Hello World');
+          m.chai.expect(fooSpy).to.not.have.been.called;
+          m.chai.expect(barSpy).to.have.been.calledOnce;
+          m.chai.expect(bazSpy).to.not.have.been.called;
+        }).nodeify(done);
+      });
+
+    });
+
+    describe('given a stream which emits events with data', function() {
+
+      beforeEach(function() {
+        this.stream = new StreamReadable({
+          encoding: 'utf8'
+        });
+
+        this.stream._read = function() {
+          this.push('Hello');
+          this.push(' ');
+          this.push('World');
+          this.push(null);
+        };
+
+        _.defer(_.bind(function() {
+          this.stream.emit('foo', 'bar', 'baz');
+          this.stream.emit('hello', 'world');
+        }, this));
+      });
+
+      it('should pipe the events along with their corresponding data', function(done) {
+        var output = new StreamPassThrough();
+
+        var fooSpy = m.sinon.spy();
+        var helloSpy = m.sinon.spy();
+
+        output.on('foo', fooSpy);
+        output.on('hello', helloSpy);
+
+        var pipe = rindle.pipeWithEvents(this.stream, output, [ 'foo', 'hello' ]);
+        rindle.extract(pipe).delay(100).then(function(data) {
+          m.chai.expect(data).to.equal('Hello World');
+          m.chai.expect(fooSpy).to.have.been.calledOnce;
+          m.chai.expect(fooSpy).to.have.been.calledWith('bar', 'baz');
+          m.chai.expect(helloSpy).to.have.been.calledOnce;
+          m.chai.expect(helloSpy).to.have.been.calledWith('world');
+        }).nodeify(done);
+      });
+
+    });
+
+    describe('given a stream which emits an event multiple times', function() {
+
+      beforeEach(function() {
+        this.stream = new StreamReadable({
+          encoding: 'utf8'
+        });
+
+        this.stream._read = function() {
+          this.push('Hello');
+          this.push(' ');
+          this.push('World');
+          this.push(null);
+        };
+
+        _.defer(_.bind(function() {
+          this.stream.emit('foo', 'bar');
+          this.stream.emit('foo', 'baz');
+          this.stream.emit('foo', 'qux');
+        }, this));
+      });
+
+      it('should pipe the events the corresponding parts', function(done) {
+        var output = new StreamPassThrough();
+
+        var fooSpy = m.sinon.spy();
+        output.on('foo', fooSpy);
+
+        var pipe = rindle.pipeWithEvents(this.stream, output, [ 'foo' ]);
+        rindle.extract(pipe).delay(100).then(function(data) {
+          m.chai.expect(data).to.equal('Hello World');
+          m.chai.expect(fooSpy).to.have.been.calledThrice;
+        }).nodeify(done);
+      });
+
+    });
+
+  });
+
 });

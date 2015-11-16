@@ -30,6 +30,7 @@ Documentation
   * [.wait(stream, callback)](#module_rindle.wait)
   * [.extract(stream, callback)](#module_rindle.extract)
   * [.bifurcate(stream, output1, output2, callback)](#module_rindle.bifurcate)
+  * [.pipeWithEvents(stream, output, events)](#module_rindle.pipeWithEvents) ⇒ <code>StreamReadable</code>
 
 <a name="module_rindle.wait"></a>
 ### rindle.wait(stream, callback)
@@ -119,6 +120,28 @@ rindle.bifurcate(input, output1, output2, function(error) {
 
   console.log('All files written!');
 });
+```
+<a name="module_rindle.pipeWithEvents"></a>
+### rindle.pipeWithEvents(stream, output, events) ⇒ <code>StreamReadable</code>
+**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+**Summary**: Pipe a stream along with certain events  
+**Returns**: <code>StreamReadable</code> - resulting stream  
+**Access:** public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| stream | <code>StreamReadable</code> | input stream |
+| output | <code>StreamWritable</code> | output stream |
+| events | <code>Array.&lt;String&gt;</code> | events to pipe |
+
+**Example**  
+```js
+var rindle = require('rindle');
+
+rindle.pipeWithEvents(input, output, [
+  'response',
+  'request'
+]);
 ```
 
 Support
