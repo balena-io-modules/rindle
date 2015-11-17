@@ -31,6 +31,7 @@ Documentation
   * [.extract(stream, callback)](#module_rindle.extract)
   * [.bifurcate(stream, output1, output2, callback)](#module_rindle.bifurcate)
   * [.pipeWithEvents(stream, output, events)](#module_rindle.pipeWithEvents) ⇒ <code>StreamReadable</code>
+  * [.onEvent(stream, event, callback)](#module_rindle.onEvent)
 
 <a name="module_rindle.wait"></a>
 ### rindle.wait(stream, callback)
@@ -142,6 +143,30 @@ rindle.pipeWithEvents(input, output, [
   'response',
   'request'
 ]);
+```
+<a name="module_rindle.onEvent"></a>
+### rindle.onEvent(stream, event, callback)
+**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+**Summary**: Wait for a stream to emit a certain event  
+**Access:** public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| stream | <code>Stream</code> | stream |
+| event | <code>String</code> | event name |
+| callback | <code>function</code> | callback (error, args...) |
+
+**Example**  
+```js
+var rindle = require('rindle');
+var fs = require('fs');
+
+rindle.onEvent(fs.createReadStream('foo/bar'), 'open', function(error, fd) {
+  if (error) throw error;
+
+  console.log('The `open` event was emitted');
+  console.log(fd);
+});
 ```
 
 Support

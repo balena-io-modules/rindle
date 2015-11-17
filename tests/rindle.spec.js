@@ -428,4 +428,76 @@ describe('Rindle:', function() {
 
   });
 
+  describe('.onEvent()', function() {
+
+    describe('given a stream that emits an event with no arguments', function() {
+
+      beforeEach(function() {
+        this.stream = new EventEmitter();
+
+        _.defer(_.bind(function() {
+          this.stream.emit('foo');
+        }, this));
+      });
+
+      it('should eventually resolve to undefined', function() {
+        var promise = rindle.onEvent(this.stream, 'foo');
+        m.chai.expect(promise).to.eventually.be.undefined;
+      });
+
+    });
+
+    describe('given a stream that emits an event with one argument', function() {
+
+      beforeEach(function() {
+        this.stream = new EventEmitter();
+
+        _.defer(_.bind(function() {
+          this.stream.emit('foo', 'bar');
+        }, this));
+      });
+
+      it('should eventually resolve with the argument', function() {
+        var promise = rindle.onEvent(this.stream, 'foo');
+        m.chai.expect(promise).to.eventually.equal('bar');
+      });
+
+    });
+
+    describe('given a stream that emits an event with multiple argument', function() {
+
+      beforeEach(function() {
+        this.stream = new EventEmitter();
+
+        _.defer(_.bind(function() {
+          this.stream.emit('foo', 'bar', 'baz', 'qux');
+        }, this));
+      });
+
+      it('should eventually resolve with all the arguments', function() {
+        var promise = rindle.onEvent(this.stream, 'foo');
+        m.chai.expect(promise).to.eventually.become([ 'bar', 'baz', 'qux' ]);
+      });
+
+      it('should be able to spread all the arguments', function(done) {
+        rindle.onEvent(this.stream, 'foo').spread(function(one, two, three) {
+          m.chai.expect(one).to.equal('bar');
+          m.chai.expect(two).to.equal('baz');
+          m.chai.expect(three).to.equal('qux');
+        }).nodeify(done);
+      });
+
+      it('should be able to spread all the arguments with a callback', function(done) {
+        rindle.onEvent(this.stream, 'foo', function(error, one, two, three) {
+          m.chai.expect(error).to.not.exist;
+          m.chai.expect(one).to.equal('bar');
+          m.chai.expect(two).to.equal('baz');
+          m.chai.expect(three).to.equal('qux');
+          done();
+        });
+      });
+
+    });
+
+  });
 });
