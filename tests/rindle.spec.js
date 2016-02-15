@@ -500,4 +500,31 @@ describe('Rindle:', function() {
     });
 
   });
+
+  describe('.getStreamFromString()', function() {
+
+    it('should throw if no input', function() {
+      m.chai.expect(function() {
+        rindle.getStreamFromString();
+      }).to.throw('Not a string: undefined');
+    });
+
+    it('should throw if input is not a string', function() {
+      m.chai.expect(function() {
+        rindle.getStreamFromString(13);
+      }).to.throw('Not a string: 13');
+    });
+
+    it('should return an instance of ReadableStream', function() {
+      var stringStream = rindle.getStreamFromString('Hello World');
+      m.chai.expect(stringStream).to.be.an.instanceof(StreamReadable);
+    });
+
+    it('should be a stream containing the string characters', function() {
+      var stringStream = rindle.getStreamFromString('Hello World');
+      m.chai.expect(rindle.extract(stringStream)).to.eventually.equal('Hello World');
+    });
+
+  });
+
 });

@@ -32,6 +32,7 @@ Documentation
   * [.bifurcate(stream, output1, output2, callback)](#module_rindle.bifurcate)
   * [.pipeWithEvents(stream, output, events)](#module_rindle.pipeWithEvents) ⇒ <code>StreamReadable</code>
   * [.onEvent(stream, event, callback)](#module_rindle.onEvent)
+  * [.getStreamFromString(string)](#module_rindle.getStreamFromString) ⇒ <code>ReadableStream</code>
 
 <a name="module_rindle.wait"></a>
 ### rindle.wait(stream, callback)
@@ -164,9 +165,25 @@ var fs = require('fs');
 rindle.onEvent(fs.createReadStream('foo/bar'), 'open', function(error, fd) {
   if (error) throw error;
 
-  console.log('The `open` event was emitted');
+  console.log('The "open" event was emitted');
   console.log(fd);
 });
+```
+<a name="module_rindle.getStreamFromString"></a>
+### rindle.getStreamFromString(string) ⇒ <code>ReadableStream</code>
+**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+**Summary**: Get a readable stream from a string  
+**Returns**: <code>ReadableStream</code> - - string stream  
+**Access:** public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| string | <code>String</code> | input string |
+
+**Example**  
+```js
+var rindle = require('rindle');
+rindle.getStreamFromString('Hello World!').pipe(process.stdout);
 ```
 
 Support
