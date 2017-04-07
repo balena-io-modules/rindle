@@ -35,8 +35,8 @@
     "tmp": "0.0.28"
   },
   "dependencies": {
-    "bluebird": "^2.10.2",
-    "lodash": "^3.10.1",
+    "bluebird": "^3.5.0",
+    "lodash": "^4.17.4",
     "string-to-stream": "^1.0.1"
   }
 }
