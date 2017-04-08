@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+### Changed
+
+- Updated bluebird to ^3.5.0
+- Updated lodash to ^4.17.4
+
 ### Fixed
 
 - Fixed tests with the latest version of string-to-stream
