@@ -1,6 +1,6 @@
 {
   "name": "rindle",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Collection of utilities for working with Streams",
   "main": "lib/rindle.js",
   "homepage": "https://github.com/jviotti/rindle",
@@ -23,7 +23,7 @@
     "toolbelt",
     "util"
   ],
-  "author": "Juan Cruz Viotti <jviottidc@gmail.com>",
+  "author": "Juan Cruz Viotti <jv@jviotti.com>",
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.0",
