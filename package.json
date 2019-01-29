@@ -24,7 +24,7 @@
     "util"
   ],
   "author": "Juan Cruz Viotti <jv@jviotti.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-jshint": "^1.11.2",
