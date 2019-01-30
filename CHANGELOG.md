@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1] - 2017-04-08
 
+## 1.3.4 - 2019-01-30
+
+* Should import lodash methods independently to reduce bundle size [Thodoris Greasidis]
+
 ## 1.3.3 - 2019-01-30
 
 * Tests: Fix missing semicolon warning [Thodoris Greasidis]
