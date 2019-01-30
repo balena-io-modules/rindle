@@ -5,6 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1] - 2017-04-08
 
+## 1.3.3 - 2019-01-30
+
+* Tests: Fix missing semicolon warning [Thodoris Greasidis]
+
 ## 1.3.2 - 2019-01-29
 
 * Travis: Drop 0.x node workers in favor of v6, 8, 10 [Thodoris Greasidis]
