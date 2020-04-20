@@ -22,6 +22,7 @@
  * THE SOFTWARE.
  */
 
+'use strict';
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var jshintStylish = require('jshint-stylish');
@@ -39,26 +40,23 @@ var paths = {
 };
 
 gulp.task('lint', function() {
-  'use strict';
   return gulp.src(paths.scripts)
     .pipe(jshint())
     .pipe(jshint.reporter(jshintStylish));
 });
 
-gulp.task('test', [ 'lint' ], function () {
-  'use strict';
+gulp.task('test', gulp.series([ 'lint' ], function () {
   return gulp.src(paths.tests, {
     read: false
   })
     .pipe(mocha({
       reporter: 'spec'
     }));
-});
+}));
 
-gulp.task('watch', [ 'test' ], function() {
-  'use strict';
+gulp.task('watch', gulp.series([ 'test' ], function() {
   gulp.watch(paths.scripts, [ 'test' ]);
   gulp.watch(paths.tests, [ 'test' ]);
-});
+}));
 
-gulp.task('default', [ 'test' ]);
+gulp.task('default', gulp.series([ 'test' ]));
