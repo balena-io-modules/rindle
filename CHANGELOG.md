@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1] - 2017-04-08
 
+# v1.3.5
+## (2020-04-20)
+
+* Switch to balena-lint for linting [Pagan Gazzard]
+* Update to gulp 4 [Pagan Gazzard]
+
 ## 1.3.4 - 2019-01-30
 
 * Should import lodash methods independently to reduce bundle size [Thodoris Greasidis]
