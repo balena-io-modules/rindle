@@ -39,7 +39,6 @@
   },
   "dependencies": {
     "bluebird": "^3.5.0",
-    "lodash": "^4.17.4",
     "string-to-stream": "^1.0.1"
   }
 }
