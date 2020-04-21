@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1] - 2017-04-08
 
+# v1.3.6
+## (2020-04-20)
+
+* Remove lodash dependency [Pagan Gazzard]
+
 # v1.3.5
 ## (2020-04-20)
 

@@ -1,6 +1,6 @@
 {
   "name": "rindle",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Collection of utilities for working with Streams",
   "main": "lib/rindle.js",
   "homepage": "https://github.com/jviotti/rindle",
