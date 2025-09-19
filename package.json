@@ -26,6 +26,9 @@
   ],
   "author": "Juan Cruz Viotti <jv@jviotti.com>",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.0"
+  },
   "devDependencies": {
     "@balena/lint": "^5.0.3",
     "chai": "^4.2.0",
