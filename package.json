@@ -41,7 +41,6 @@
     "tmp": "0.0.28"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
     "string-to-stream": "^1.0.1"
   }
 }

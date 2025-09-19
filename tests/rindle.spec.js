@@ -30,6 +30,7 @@ var StringStream = require('string-to-stream');
 var StreamReadable = require('stream').Readable;
 var StreamPassThrough = require('stream').PassThrough;
 var EventEmitter = require('events').EventEmitter;
+const { setTimeout: delay } = require('timers/promises');
 var tmp = require('tmp');
 tmp.setGracefulCleanup();
 
@@ -314,15 +315,12 @@ describe('Rindle:', function () {
 					'bar',
 					'baz',
 				]);
-				await rindle
-					.extract(pipe)
-					.delay(100)
-					.then(function (data) {
-						expect(data).to.equal('Hello World');
-						expect(fooSpy).to.have.been.calledOnce;
-						expect(barSpy).to.have.been.calledOnce;
-						expect(bazSpy).to.have.been.calledOnce;
-					});
+				const data = await rindle.extract(pipe);
+				await delay(100);
+				expect(data).to.equal('Hello World');
+				expect(fooSpy).to.have.been.calledOnce;
+				expect(barSpy).to.have.been.calledOnce;
+				expect(bazSpy).to.have.been.calledOnce;
 			});
 
 			it('should be able to pipe some events', async function () {
@@ -337,15 +335,12 @@ describe('Rindle:', function () {
 				output.on('baz', bazSpy);
 
 				var pipe = rindle.pipeWithEvents(this.stream, output, ['bar']);
-				await rindle
-					.extract(pipe)
-					.delay(100)
-					.then(function (data) {
-						expect(data).to.equal('Hello World');
-						expect(fooSpy).to.not.have.been.called;
-						expect(barSpy).to.have.been.calledOnce;
-						expect(bazSpy).to.not.have.been.called;
-					});
+				const data = await rindle.extract(pipe);
+				await delay(100);
+				expect(data).to.equal('Hello World');
+				expect(fooSpy).to.not.have.been.called;
+				expect(barSpy).to.have.been.calledOnce;
+				expect(bazSpy).to.not.have.been.called;
 			});
 		});
 
@@ -380,16 +375,13 @@ describe('Rindle:', function () {
 				output.on('hello', helloSpy);
 
 				var pipe = rindle.pipeWithEvents(this.stream, output, ['foo', 'hello']);
-				await rindle
-					.extract(pipe)
-					.delay(100)
-					.then(function (data) {
-						expect(data).to.equal('Hello World');
-						expect(fooSpy).to.have.been.calledOnce;
-						expect(fooSpy).to.have.been.calledWith('bar', 'baz');
-						expect(helloSpy).to.have.been.calledOnce;
-						expect(helloSpy).to.have.been.calledWith('world');
-					});
+				const data = await rindle.extract(pipe);
+				await delay(100);
+				expect(data).to.equal('Hello World');
+				expect(fooSpy).to.have.been.calledOnce;
+				expect(fooSpy).to.have.been.calledWith('bar', 'baz');
+				expect(helloSpy).to.have.been.calledOnce;
+				expect(helloSpy).to.have.been.calledWith('world');
 			});
 		});
 
@@ -422,13 +414,10 @@ describe('Rindle:', function () {
 				output.on('foo', fooSpy);
 
 				var pipe = rindle.pipeWithEvents(this.stream, output, ['foo']);
-				await rindle
-					.extract(pipe)
-					.delay(100)
-					.then(function (data) {
-						expect(data).to.equal('Hello World');
-						expect(fooSpy).to.have.been.calledThrice;
-					});
+				const data = await rindle.extract(pipe);
+				await delay(100);
+				expect(data).to.equal('Hello World');
+				expect(fooSpy).to.have.been.calledThrice;
 			});
 		});
 	});
@@ -485,13 +474,8 @@ describe('Rindle:', function () {
 			});
 
 			it('should be able to spread all the arguments', async function () {
-				await rindle
-					.onEvent(this.stream, 'foo')
-					.spread(function (one, two, three) {
-						expect(one).to.equal('bar');
-						expect(two).to.equal('baz');
-						expect(three).to.equal('qux');
-					});
+				const result = await rindle.onEvent(this.stream, 'foo');
+				expect(result).to.deep.equal(['bar', 'baz', 'qux']);
 			});
 
 			it('should be able to spread all the arguments with a callback', async function () {
