@@ -25,8 +25,7 @@
 var chai = require('chai');
 var sinon = require('sinon');
 var _ = require('lodash');
-var Promise = require('bluebird');
-var fs = Promise.promisifyAll(require('fs'));
+var fs = require('fs');
 var StringStream = require('string-to-stream');
 var StreamReadable = require('stream').Readable;
 var StreamPassThrough = require('stream').PassThrough;
@@ -56,18 +55,13 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should return no error', function (done) {
-				rindle.wait(this.stream, function (error) {
-					expect(error).to.not.exist;
-					done();
-				});
+			it('should not reject', async function () {
+				await rindle.wait(this.stream);
 			});
 
-			it('should return no result', function (done) {
-				rindle.wait(this.stream, function (error, result) {
-					expect(result).to.not.exist;
-					done();
-				});
+			it('should return no result', async function () {
+				const result = await rindle.wait(this.stream);
+				expect(result).to.deep.equal([]);
 			});
 		});
 
@@ -82,11 +76,9 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should return the result', function (done) {
-				rindle.wait(this.stream, function (error, result) {
-					expect(result).to.equal('foo');
-					done();
-				});
+			it('should return the result', async function () {
+				const result = await rindle.wait(this.stream);
+				expect(result).to.deep.equal(['foo']);
 			});
 		});
 
@@ -101,13 +93,9 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should return all the results', function (done) {
-				rindle.wait(this.stream, function (error, x, y, z) {
-					expect(x).to.equal('foo');
-					expect(y).to.equal('bar');
-					expect(z).to.equal('baz');
-					done();
-				});
+			it('should return all the results', async function () {
+				const result = await rindle.wait(this.stream);
+				expect(result).to.deep.equal(['foo', 'bar', 'baz']);
 			});
 		});
 
@@ -122,11 +110,8 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should return no error', function (done) {
-				rindle.wait(this.stream, function (error) {
-					expect(error).to.not.exist;
-					done();
-				});
+			it('should return no error', async function () {
+				await rindle.wait(this.stream);
 			});
 		});
 
@@ -141,11 +126,8 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should return no error', function (done) {
-				rindle.wait(this.stream, function (error) {
-					expect(error).to.not.exist;
-					done();
-				});
+			it('should return no error', async function () {
+				await rindle.wait(this.stream);
 			});
 		});
 
@@ -160,12 +142,14 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should yield the error', function (done) {
-				rindle.wait(this.stream, function (error) {
+			it('should yield the error', async function () {
+				try {
+					await rindle.wait(this.stream);
+					throw new Error('No error was thrown but was expected');
+				} catch (error) {
 					expect(error).to.be.an.instanceof(Error);
 					expect(error.message).to.equal('stream error');
-					done();
-				});
+				}
 			});
 		});
 	});
@@ -185,11 +169,10 @@ describe('Rindle:', function () {
 				};
 			});
 
-			it('should yield the stream data', function (done) {
+			it('should yield the stream data', async function () {
 				rindle.extract(this.stream, function (error, data) {
 					expect(error).to.not.exist;
 					expect(data).to.equal('Hello World');
-					done();
 				});
 			});
 		});
@@ -213,13 +196,14 @@ describe('Rindle:', function () {
 				};
 			});
 
-			it('should yield the error', function (done) {
-				rindle.extract(this.stream, function (error, data) {
+			it('should yield the error', async function () {
+				try {
+					await rindle.extract(this.stream);
+					throw new Error('No error was thrown but was expected');
+				} catch (error) {
 					expect(error).to.be.an.instanceof(Error);
 					expect(error.message).to.equal('stream error');
-					expect(data).to.not.exist;
-					done();
-				});
+				}
 			});
 		});
 	});
@@ -245,18 +229,16 @@ describe('Rindle:', function () {
 					this.output2 = new StreamPassThrough();
 				});
 
-				it('should pipe all data to both streams', function (done) {
+				it('should pipe all data to both streams', function () {
 					rindle.bifurcate(this.stream, this.output1, this.output2);
 
-					Promise.props({
-						one: rindle.extract(this.output1),
-						two: rindle.extract(this.output2),
-					})
-						.then(function (data) {
-							expect(data.one).to.equal('Hello World');
-							expect(data.two).to.equal('Hello World');
-						})
-						.nodeify(done);
+					return Promise.all([
+						rindle.extract(this.output1),
+						rindle.extract(this.output2),
+					]).then(function ([one, two]) {
+						expect(one).to.equal('Hello World');
+						expect(two).to.equal('Hello World');
+					});
 				});
 			});
 
@@ -269,21 +251,23 @@ describe('Rindle:', function () {
 					this.output2 = fs.createWriteStream(this.output2Path);
 				});
 
-				it('should write all data to both files', function (done) {
-					rindle.bifurcate(
+				it('should write all data to both files', function () {
+					return rindle.bifurcate(
 						this.stream,
 						this.output1,
 						this.output2,
 						_.bind(function (error) {
-							Promise.props({
-								one: fs.readFileAsync(this.output1Path, { encoding: 'utf8' }),
-								two: fs.readFileAsync(this.output2Path, { encoding: 'utf8' }),
-							})
-								.then(function (data) {
-									expect(data.one).to.equal('Hello World');
-									expect(data.two).to.equal('Hello World');
-								})
-								.nodeify(done);
+							return Promise.all([
+								fs.promises.readFile(this.output1Path, {
+									encoding: 'utf8',
+								}),
+								fs.promises.readFile(this.output2Path, {
+									encoding: 'utf8',
+								}),
+							]).then(function ([one, two]) {
+								expect(one).to.equal('Hello World');
+								expect(two).to.equal('Hello World');
+							});
 						}, this),
 					);
 				});
@@ -314,7 +298,7 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should be able to pipe all events', function (done) {
+			it('should be able to pipe all events', async function () {
 				var output = new StreamPassThrough();
 
 				var fooSpy = sinon.spy();
@@ -330,7 +314,7 @@ describe('Rindle:', function () {
 					'bar',
 					'baz',
 				]);
-				rindle
+				await rindle
 					.extract(pipe)
 					.delay(100)
 					.then(function (data) {
@@ -338,11 +322,10 @@ describe('Rindle:', function () {
 						expect(fooSpy).to.have.been.calledOnce;
 						expect(barSpy).to.have.been.calledOnce;
 						expect(bazSpy).to.have.been.calledOnce;
-					})
-					.nodeify(done);
+					});
 			});
 
-			it('should be able to pipe some events', function (done) {
+			it('should be able to pipe some events', async function () {
 				var output = new StreamPassThrough();
 
 				var fooSpy = sinon.spy();
@@ -354,7 +337,7 @@ describe('Rindle:', function () {
 				output.on('baz', bazSpy);
 
 				var pipe = rindle.pipeWithEvents(this.stream, output, ['bar']);
-				rindle
+				await rindle
 					.extract(pipe)
 					.delay(100)
 					.then(function (data) {
@@ -362,8 +345,7 @@ describe('Rindle:', function () {
 						expect(fooSpy).to.not.have.been.called;
 						expect(barSpy).to.have.been.calledOnce;
 						expect(bazSpy).to.not.have.been.called;
-					})
-					.nodeify(done);
+					});
 			});
 		});
 
@@ -388,7 +370,7 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should pipe the events along with their corresponding data', function (done) {
+			it('should pipe the events along with their corresponding data', async function () {
 				var output = new StreamPassThrough();
 
 				var fooSpy = sinon.spy();
@@ -398,7 +380,7 @@ describe('Rindle:', function () {
 				output.on('hello', helloSpy);
 
 				var pipe = rindle.pipeWithEvents(this.stream, output, ['foo', 'hello']);
-				rindle
+				await rindle
 					.extract(pipe)
 					.delay(100)
 					.then(function (data) {
@@ -407,8 +389,7 @@ describe('Rindle:', function () {
 						expect(fooSpy).to.have.been.calledWith('bar', 'baz');
 						expect(helloSpy).to.have.been.calledOnce;
 						expect(helloSpy).to.have.been.calledWith('world');
-					})
-					.nodeify(done);
+					});
 			});
 		});
 
@@ -434,21 +415,20 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should pipe the events the corresponding parts', function (done) {
+			it('should pipe the events the corresponding parts', async function () {
 				var output = new StreamPassThrough();
 
 				var fooSpy = sinon.spy();
 				output.on('foo', fooSpy);
 
 				var pipe = rindle.pipeWithEvents(this.stream, output, ['foo']);
-				rindle
+				await rindle
 					.extract(pipe)
 					.delay(100)
 					.then(function (data) {
 						expect(data).to.equal('Hello World');
 						expect(fooSpy).to.have.been.calledThrice;
-					})
-					.nodeify(done);
+					});
 			});
 		});
 	});
@@ -499,30 +479,24 @@ describe('Rindle:', function () {
 				);
 			});
 
-			it('should eventually resolve with all the arguments', function () {
+			it('should eventually resolve with all the arguments', async function () {
 				var promise = rindle.onEvent(this.stream, 'foo');
-				expect(promise).to.eventually.become(['bar', 'baz', 'qux']);
+				await expect(promise).to.eventually.become(['bar', 'baz', 'qux']);
 			});
 
-			it('should be able to spread all the arguments', function (done) {
-				rindle
+			it('should be able to spread all the arguments', async function () {
+				await rindle
 					.onEvent(this.stream, 'foo')
 					.spread(function (one, two, three) {
 						expect(one).to.equal('bar');
 						expect(two).to.equal('baz');
 						expect(three).to.equal('qux');
-					})
-					.nodeify(done);
+					});
 			});
 
-			it('should be able to spread all the arguments with a callback', function (done) {
-				rindle.onEvent(this.stream, 'foo', function (error, one, two, three) {
-					expect(error).to.not.exist;
-					expect(one).to.equal('bar');
-					expect(two).to.equal('baz');
-					expect(three).to.equal('qux');
-					done();
-				});
+			it('should be able to spread all the arguments with a callback', async function () {
+				const result = await rindle.onEvent(this.stream, 'foo');
+				expect(result).to.deep.equal(['bar', 'baz', 'qux']);
 			});
 		});
 	});
