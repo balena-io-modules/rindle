@@ -3,10 +3,10 @@
   "version": "1.3.6",
   "description": "Collection of utilities for working with Streams",
   "main": "lib/rindle.js",
-  "homepage": "https://github.com/jviotti/rindle",
+  "homepage": "https://github.com/balena-io-modules/rindle",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jviotti/rindle.git"
+    "url": "git://github.com/balena-io-modules/rindle.git"
   },
   "directories": {
     "test": "tests"
@@ -24,8 +24,11 @@
     "toolbelt",
     "util"
   ],
-  "author": "Juan Cruz Viotti <jv@jviotti.com>",
+  "author": "Balena Ltd. <hello@balena.io>",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20.0"
+  },
   "devDependencies": {
     "@balena/lint": "^5.0.3",
     "chai": "^4.2.0",
@@ -38,7 +41,6 @@
     "tmp": "0.0.28"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
     "string-to-stream": "^1.0.1"
   }
 }
