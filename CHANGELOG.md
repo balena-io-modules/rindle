@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1] - 2017-04-08
 
+# v2.0.0
+## (2025-09-22)
+
+* Drop Bluebird in favor of native Promises [Thodoris Greasidis]
+* Drop support for callbacks in favor of Promises [Thodoris Greasidis]
+* Drop support for nodejs < 20 [Thodoris Greasidis]
+* Block the creation of package-lock.json [Thodoris Greasidis]
+* Replace balenaCI with flowzone [Thodoris Greasidis]
+* Drop no longer used hound, travis & appveyor ymls [Thodoris Greasidis]
+
 # v1.3.6
 ## (2020-04-20)
 
