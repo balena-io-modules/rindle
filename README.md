@@ -27,15 +27,15 @@ Documentation
 
 
 * [rindle](#module_rindle)
-  * [.wait(stream, callback)](#module_rindle.wait)
-  * [.extract(stream, callback)](#module_rindle.extract)
-  * [.bifurcate(stream, output1, output2, callback)](#module_rindle.bifurcate)
-  * [.pipeWithEvents(stream, output, events)](#module_rindle.pipeWithEvents) ⇒ <code>StreamReadable</code>
-  * [.onEvent(stream, event, callback)](#module_rindle.onEvent)
-  * [.getStreamFromString(string)](#module_rindle.getStreamFromString) ⇒ <code>ReadableStream</code>
+    * [.wait(stream)](#module_rindle.wait)
+    * [.extract(stream)](#module_rindle.extract)
+    * [.bifurcate(stream, output1, output2)](#module_rindle.bifurcate)
+    * [.pipeWithEvents(stream, output, events)](#module_rindle.pipeWithEvents) ⇒ <code>StreamReadable</code>
+    * [.onEvent(stream, event)](#module_rindle.onEvent)
 
 <a name="module_rindle.wait"></a>
-### rindle.wait(stream, callback)
+
+### rindle.wait(stream)
 This functions listens for the following events:
 
 - `close`.
@@ -44,14 +44,13 @@ This functions listens for the following events:
 
 If those events pass any argument when being emitted, you'll be able to access them as arguments to the callback.
 
-**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+**Kind**: static method of [<code>rindle</code>](#module_rindle)  
 **Summary**: Wait for a stream to close  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | stream | <code>Stream</code> | stream |
-| callback | <code>function</code> | callback (error, args...) |
 
 **Example**  
 ```js
@@ -63,23 +62,25 @@ var output = fs.createWriteStream('foo/baz');
 
 input.pipe(output);
 
-rindle.wait(output, function(error) {
-  if (error) throw error;
+try {
+  await rindle.wait(output);
   console.log('The output stream was closed!');
-});
+}(error) {
+  if (error) throw error;
+}
 ```
 <a name="module_rindle.extract"></a>
-### rindle.extract(stream, callback)
+
+### rindle.extract(stream)
 Notice this function only extracts the *remaining data* from the stream.
 
-**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+**Kind**: static method of [<code>rindle</code>](#module_rindle)  
 **Summary**: Extract data from readable stream  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | stream | <code>StreamReadable</code> | stream |
-| callback | <code>function</code> | callback (error, data) |
 
 **Example**  
 ```js
@@ -88,25 +89,27 @@ var rindle = require('rindle');
 
 var input = fs.createReadStream('foo/bar');
 
-rindle.extract(input, function(error, data) {
-  if (error) throw error;
+try {
+  const data = await rindle.extract(input);
   console.log('The file contains: ' + data);
-});
+} catch (error) {
+  if (error) throw error;
+}
 ```
 <a name="module_rindle.bifurcate"></a>
-### rindle.bifurcate(stream, output1, output2, callback)
-The callback is called when both output stream close.
 
-**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+### rindle.bifurcate(stream, output1, output2)
+The returned promised gets resolved when both output streams close.
+
+**Kind**: static method of [<code>rindle</code>](#module_rindle)  
 **Summary**: Bifurcate readable stream to two writable streams  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | stream | <code>StreamReadable</code> | input stream |
 | output1 | <code>StreamWritable</code> | first output stream |
 | output2 | <code>StreamWritable</code> | second output stream |
-| callback | <code>function</code> | callback (error) |
 
 **Example**  
 ```js
@@ -117,18 +120,20 @@ var input = fs.createReadStream('foo/bar');
 var output1 = fs.createWriteStream('foo/baz');
 var output2 = fs.createWriteStream('foo/qux');
 
-rindle.bifurcate(input, output1, output2, function(error) {
-  if (error) throw error;
-
+try {
+  await rindle.bifurcate(input, output1, output2,
   console.log('All files written!');
-});
+} (error) {
+  if (error) throw error;
+}
 ```
 <a name="module_rindle.pipeWithEvents"></a>
+
 ### rindle.pipeWithEvents(stream, output, events) ⇒ <code>StreamReadable</code>
-**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+**Kind**: static method of [<code>rindle</code>](#module_rindle)  
 **Summary**: Pipe a stream along with certain events  
 **Returns**: <code>StreamReadable</code> - resulting stream  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -146,44 +151,29 @@ rindle.pipeWithEvents(input, output, [
 ]);
 ```
 <a name="module_rindle.onEvent"></a>
-### rindle.onEvent(stream, event, callback)
-**Kind**: static method of <code>[rindle](#module_rindle)</code>  
+
+### rindle.onEvent(stream, event)
+**Kind**: static method of [<code>rindle</code>](#module_rindle)  
 **Summary**: Wait for a stream to emit a certain event  
-**Access:** public  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | stream | <code>Stream</code> | stream |
 | event | <code>String</code> | event name |
-| callback | <code>function</code> | callback (error, args...) |
 
 **Example**  
 ```js
 var rindle = require('rindle');
 var fs = require('fs');
 
-rindle.onEvent(fs.createReadStream('foo/bar'), 'open', function(error, fd) {
-  if (error) throw error;
-
+try {
+  const fd = await rindle.onEvent(fs.createReadStream('foo/bar'), 'open');
   console.log('The "open" event was emitted');
   console.log(fd);
-});
-```
-<a name="module_rindle.getStreamFromString"></a>
-### rindle.getStreamFromString(string) ⇒ <code>ReadableStream</code>
-**Kind**: static method of <code>[rindle](#module_rindle)</code>  
-**Summary**: Get a readable stream from a string  
-**Returns**: <code>ReadableStream</code> - - string stream  
-**Access:** public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| string | <code>String</code> | input string |
-
-**Example**  
-```js
-var rindle = require('rindle');
-rindle.getStreamFromString('Hello World!').pipe(process.stdout);
+} (error) {
+  if (error) throw error;
+}
 ```
 
 Support
