@@ -26,7 +26,6 @@ var chai = require('chai');
 var sinon = require('sinon');
 var _ = require('lodash');
 var fs = require('fs');
-var StringStream = require('string-to-stream');
 var StreamReadable = require('stream').Readable;
 var StreamPassThrough = require('stream').PassThrough;
 var EventEmitter = require('events').EventEmitter;
@@ -482,36 +481,6 @@ describe('Rindle:', function () {
 				const result = await rindle.onEvent(this.stream, 'foo');
 				expect(result).to.deep.equal(['bar', 'baz', 'qux']);
 			});
-		});
-	});
-
-	describe('.getStreamFromString()', function () {
-		it('should throw if no input', function () {
-			chai
-				.expect(function () {
-					rindle.getStreamFromString();
-				})
-				.to.throw('Not a string: undefined');
-		});
-
-		it('should throw if input is not a string', function () {
-			chai
-				.expect(function () {
-					rindle.getStreamFromString(13);
-				})
-				.to.throw('Not a string: 13');
-		});
-
-		it('should return an instance of ReadableStream', function () {
-			var stringStream = rindle.getStreamFromString('Hello World');
-			expect(stringStream).to.be.an.instanceof(StringStream);
-		});
-
-		it('should be a stream containing the string characters', function () {
-			var stringStream = rindle.getStreamFromString('Hello World');
-			chai
-				.expect(rindle.extract(stringStream))
-				.to.eventually.equal('Hello World');
 		});
 	});
 });

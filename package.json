@@ -41,7 +41,6 @@
     "tmp": "0.0.28"
   },
   "dependencies": {
-    "string-to-stream": "^1.0.1"
   },
   "versionist": {
     "publishedAt": "2025-09-22T08:53:39.624Z"
