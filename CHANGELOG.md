@@ -5,6 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.3.1] - 2017-04-08
 
+# v3.0.0
+## (2025-09-23)
+
+* Update jsdoc-to-markdown to v9 and regenerate the README [Thodoris Greasidis]
+* Drop the getStreamFromString method [Thodoris Greasidis]
+
 # v2.0.0
 ## (2025-09-22)
 

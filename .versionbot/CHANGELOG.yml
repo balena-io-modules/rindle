@@ -1,4 +1,22 @@
 - commits:
+    - subject: Update jsdoc-to-markdown to v9 and regenerate the README
+      hash: 47845a8b2fade087250929d666eff897db95efcd
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+    - subject: Drop the getStreamFromString method
+      hash: 02717a0a91b1d56f00d46edb016e09211dadc5cb
+      body: ""
+      footer:
+        Change-type: major
+        change-type: major
+      author: Thodoris Greasidis
+  version: 3.0.0
+  title: ""
+  date: 2025-09-23T14:17:38.449Z
+- commits:
     - subject: Drop Bluebird in favor of native Promises
       hash: c6509a544bfab4a374dfabc1c06bec5b7953d392
       body: ""
