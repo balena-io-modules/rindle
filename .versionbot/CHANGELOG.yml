@@ -1,4 +1,17 @@
 - commits:
+    - subject: "Add id-token: write permission for NPM OIDC publishing"
+      hash: 77b28b7aa1dc7b76a8c54da41e4cae011a4d5036
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Kyle Harding <kyle@balena.io>
+        signed-off-by: Kyle Harding <kyle@balena.io>
+      author: Kyle Harding
+  version: 3.0.1
+  title: ""
+  date: 2026-02-19T01:53:56.327Z
+- commits:
     - subject: Update jsdoc-to-markdown to v9 and regenerate the README
       hash: 47845a8b2fade087250929d666eff897db95efcd
       body: ""

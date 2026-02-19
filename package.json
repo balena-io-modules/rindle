@@ -1,6 +1,6 @@
 {
   "name": "rindle",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Collection of utilities for working with Streams",
   "main": "lib/rindle.js",
   "homepage": "https://github.com/balena-io-modules/rindle",
@@ -42,6 +42,6 @@
   },
   "dependencies": {},
   "versionist": {
-    "publishedAt": "2025-09-23T14:17:38.491Z"
+    "publishedAt": "2026-02-19T01:53:56.376Z"
   }
 }
